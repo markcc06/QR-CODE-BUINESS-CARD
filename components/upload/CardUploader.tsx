@@ -1,0 +1,228 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Upload, Loader2, Crop } from 'lucide-react';
+import { useCardStore } from '@/store/cardStore';
+import CropperModal from './CropperModal';
+import {
+  compressFileToDataURL,
+  compressDataURL,
+  dataURLByteSize,
+} from '@/lib/image';
+
+export default function CardUploader() {
+  const [cardImage, setCardImage] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+
+  const {
+    setActiveTab,
+    setPerson,
+    setTemplate,
+    isRecognizing,
+    recognizeProgress,
+    setRecognizing,
+    setRecognizeProgress,
+  } = useCardStore();
+
+  /** 选择本地名片图片后，做一次压缩，存为 dataURL 以便预览/裁剪 */
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const compressed = await compressFileToDataURL(file, {
+      maxWidth: 1800,
+      maxHeight: 1800,
+      maxBytes: 4 * 1024 * 1024,
+    });
+    setCardImage(compressed);
+  };
+
+  /** 裁剪完成后回填 */
+  const onCropConfirmAction = async (croppedDataURL: string) => {
+    const finalDataURL = await compressDataURL(croppedDataURL, {
+      maxWidth: 1800,
+      maxHeight: 1800,
+      maxBytes: 4 * 1024 * 1024,
+    });
+    setCardImage(finalDataURL);
+    setShowCropper(false);
+  };
+  const onCloseAction = () => setShowCropper(false);
+
+  /** 触发 OCR 识别（dataURL -> Blob -> FormData -> /api/recognize-card） */
+  const recognizeCard = async () => {
+    if (!cardImage || isRecognizing) return;
+
+    setRecognizing(true);
+    setRecognizeProgress(0);
+
+    // 伪进度条（提升感知）
+    let p = 0;
+    const fake = setInterval(() => {
+      p = Math.min(p + 4, 95);
+      setRecognizeProgress(p);
+      if (p >= 95) clearInterval(fake);
+    }, 120);
+
+    // 真·超时控制（首启 Tesseract 可能较慢，可先放宽）
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 90_000); // 90s
+
+    try {
+      // dataURL -> Blob -> FormData
+      const blob = await (await fetch(cardImage)).blob();
+      const fd = new FormData();
+      fd.append('file', blob, 'card.jpg');
+
+      const res = await fetch('/api/recognize-card', {
+        method: 'POST',
+        body: fd,
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        // 422 = 空结果；其他 = 服务器错误
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // 将识别结果回填到表单（没有的字段用空串兜底）
+      setPerson({
+        givenName: data.firstName || '',
+        familyName: data.lastName || '',
+        jobTitle: data.jobTitle || '',
+        organization: data.company || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        website: data.website || '',
+        location: data.address || '',
+        socials: data.socials || [],
+      });
+
+      // 默认回到 Basics + 选一个模板
+      setTemplate('classic');
+      setActiveTab('basics');
+      setRecognizeProgress(100);
+    } catch (e: any) {
+      if (e?.name === 'AbortError') {
+        alert('Timeout: OCR took too long. Try a clearer photo or retry.');
+      } else {
+        console.error('recognize error', e);
+        alert('Recognition failed. Please try again with a clearer photo.');
+      }
+      setRecognizeProgress(0);
+    } finally {
+      clearTimeout(timeout);
+      clearInterval(fake);
+      setTimeout(() => {
+        setRecognizing(false);
+        setRecognizeProgress(0);
+      }, 500);
+    }
+  };
+
+  return (
+    <div className="mt-4 space-y-6">
+      {/* 上传说明与按钮 */}
+      <div className="space-y-2">
+        <h3 className="text-lg font-medium">Upload Paper Card (Optional)</h3>
+        <p className="text-gray-500">
+          Upload a photo of your existing business card for reference. This will
+          be displayed alongside the form to help you copy the information.
+        </p>
+
+        <div className="w-full p-4 border border-gray-200 rounded-lg">
+          <button
+            onClick={() => document.getElementById('card-upload')?.click()}
+            className="w-full py-3 flex items-center justify-center gap-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            <Upload className="w-5 h-5" />
+            <span>Upload Paper Card Photo</span>
+          </button>
+
+          <p className="text-gray-400 text-xs mt-2">
+            Tip: Upload a clear, well-lit image. Blurry, tilted, reflective, or
+            low-resolution photos may reduce recognition accuracy.
+          </p>
+
+          <input
+            id="card-upload"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+        </div>
+      </div>
+
+      {/* 预览 + 操作 */}
+      {cardImage && (
+        <div className="relative space-y-3">
+          <div className="relative border border-gray-200 rounded-lg overflow-hidden">
+            <img
+              src={cardImage}
+              alt="Business Card"
+              className="w-full object-contain"
+            />
+
+            {isRecognizing && (
+              <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
+                <p className="text-white mb-2">Recognizing…</p>
+                <div className="w-3/4 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 transition-all duration-300 ease-out"
+                    style={{ width: `${recognizeProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setShowCropper(true)}
+              className="flex-1 py-2 rounded-lg flex items-center justify-center gap-2 border border-gray-300 text-gray-700 hover:bg-gray-50"
+              disabled={isRecognizing}
+              title={
+                cardImage
+                  ? `Size: ${(dataURLByteSize(cardImage) / 1024 / 1024).toFixed(
+                      2
+                    )} MB`
+                  : undefined
+              }
+            >
+              <Crop className="w-4 h-4" />
+              Crop
+            </button>
+
+            <button
+              onClick={recognizeCard}
+              disabled={isRecognizing}
+              className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                isRecognizing
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
+            >
+              {isRecognizing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : null}
+              <span>{isRecognizing ? 'Processing…' : 'Recognize Card'}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 裁剪弹窗（注意：使用 onConfirmAction / onCloseAction 命名） */}
+      <CropperModal
+        open={showCropper}
+        src={cardImage || ''}
+        onConfirmAction={onCropConfirmAction}
+        onCloseAction={onCloseAction}
+      />
+    </div>
+  );
+}
