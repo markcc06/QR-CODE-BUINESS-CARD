@@ -7,9 +7,19 @@ import sharp from "sharp";
 import { createWorker } from "tesseract.js";
 import { extractFields } from "@/lib/extractFields";
 
+// CDN：固定用 v5 的文件名
+const TESS_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist";
+
+// 语言包基址：优先用私有变量 TESS_LANG_BASE；本地调试也兼容 NEXT_PUBLIC_TESS_LANG_BASE
+const LANG_BASE_RAW =
+  process.env.TESS_LANG_BASE || process.env.NEXT_PUBLIC_TESS_LANG_BASE || "";
+const LANG_BASE = LANG_BASE_RAW
+  ? LANG_BASE_RAW.endsWith("/") ? LANG_BASE_RAW : `${LANG_BASE_RAW}/`
+  : "";
+
 async function preprocess(buffer: Buffer): Promise<Buffer> {
-  // 基础稳态预处理（英文卡片足够）：方向→放大→灰度→归一化→导出 PNG
-  return await sharp(buffer)
+  // 稳妥的通用图像预处理
+  return sharp(buffer)
     .rotate()
     .resize({ width: 2000, withoutEnlargement: false })
     .grayscale()
@@ -26,13 +36,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file" }, { status: 400 });
     }
 
+    if (!LANG_BASE) {
+      return NextResponse.json(
+        { error: "Missing TESS_LANG_BASE (or NEXT_PUBLIC_TESS_LANG_BASE)" },
+        { status: 500 }
+      );
+    }
+
     const buf = Buffer.from(await file.arrayBuffer());
     const input = await preprocess(buf);
 
-    // 仅英文识别；语言包走 TESS_LANG_BASE（注意以 / 结尾）
-    const worker = await createWorker("eng", 1, {
-      langPath: process.env.TESS_LANG_BASE,
-    });
+    const worker = await createWorker("eng", {
+      workerPath: `${TESS_CDN}/worker.min.js`,
+      corePath: `${TESS_CDN}/tesseract-core.wasm.js`,
+      langPath: LANG_BASE,
+    } as any);  // 👈 强制断言为 any，忽略旧类型定义
 
     const { data } = await worker.recognize(input);
     await worker.terminate();
@@ -42,11 +60,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Empty OCR result" }, { status: 422 });
     }
 
-    // 更智能抽取
     const fields = extractFields(rawText);
-
     return NextResponse.json({ ...fields, rawText });
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "OCR failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: e?.message || "OCR failed" },
+      { status: 500 }
+    );
   }
 }
