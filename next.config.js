@@ -1,22 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    // 让 Next 在服务端按“外部包”处理 tesseract.js，避免把 worker 打包坏
-    serverComponentsExternalPackages: ['tesseract.js', 'node-fetch'],
+    // 这些包不要被打到 bundle 里，保持原样随函数一起部署
+    serverComponentsExternalPackages: ['tesseract.js', 'sharp', 'node-fetch'],
 
-    // 把 worker/wasm/语言数据追踪进产物（路由目录按你的项目来）
+    // 把 worker/wasm/以及 sharp 的原生二进制都打进 /api/recognize-card 函数
     outputFileTracingIncludes: {
-      // App Router 的 API 目录
       '/app/api/recognize-card/*': [
-        './node_modules/**/tesseract*.*',
-        './node_modules/**/worker-script/**/*',
-        './node_modules/**/tesseract-core*.wasm',
-        './node_modules/**/@tesseract.js-data*/**/*',
-      ]
+        './node_modules/sharp/**/*',
+        './node_modules/tesseract.js/**/*',
+        './node_modules/worker-script/**/*',
+        './node_modules/tesseract-core.wasm',          // 保险起见
+        './node_modules/tesseract.js-core/**/*',
+        './node_modules/@tesseract.js-data/**/**/*',
+      ],
     },
   },
-  // 如果你有使用 transpilePackages 也可以加上（多数情况不是必须）
-  // transpilePackages: ['tesseract.js'],
 };
 
 module.exports = nextConfig;
