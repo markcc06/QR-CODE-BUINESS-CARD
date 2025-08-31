@@ -7,19 +7,28 @@ import sharp from "sharp";
 import { createWorker } from "tesseract.js";
 import { extractFields } from "@/lib/extractFields";
 
-// CDN：固定用 v5 的文件名
-const TESS_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist";
-
-// 语言包基址：优先用私有变量 TESS_LANG_BASE；本地调试也兼容 NEXT_PUBLIC_TESS_LANG_BASE
 const LANG_BASE_RAW =
-  process.env.TESS_LANG_BASE || process.env.NEXT_PUBLIC_TESS_LANG_BASE || "";
+  process.env.NEXT_PUBLIC_TESS_LANG_BASE || process.env.TESS_LANG_BASE || "";
 const LANG_BASE = LANG_BASE_RAW
   ? LANG_BASE_RAW.endsWith("/") ? LANG_BASE_RAW : `${LANG_BASE_RAW}/`
   : "";
 
+const TESS_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist";
+
+/** 允许预检请求，防止 405 */
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+}
+
 async function preprocess(buffer: Buffer): Promise<Buffer> {
-  // 稳妥的通用图像预处理
-  return sharp(buffer)
+  return await sharp(buffer)
     .rotate()
     .resize({ width: 2000, withoutEnlargement: false })
     .grayscale()
@@ -30,27 +39,29 @@ async function preprocess(buffer: Buffer): Promise<Buffer> {
 
 export async function POST(req: Request) {
   try {
+    if (!LANG_BASE) {
+      return NextResponse.json(
+        { error: "Missing NEXT_PUBLIC_TESS_LANG_BASE (or TESS_LANG_BASE)" },
+        { status: 500 }
+      );
+    }
+
     const form = await req.formData();
     const file = form.get("file") as File | null;
     if (!file) {
       return NextResponse.json({ error: "No file" }, { status: 400 });
     }
 
-    if (!LANG_BASE) {
-      return NextResponse.json(
-        { error: "Missing TESS_LANG_BASE (or NEXT_PUBLIC_TESS_LANG_BASE)" },
-        { status: 500 }
-      );
-    }
-
     const buf = Buffer.from(await file.arrayBuffer());
     const input = await preprocess(buf);
 
-    const worker = await createWorker("eng", {
+    // 用 CDN 的 worker/core，同时用你 Supabase 的语言包目录
+    const worker = await createWorker("eng", 1, {
       workerPath: `${TESS_CDN}/worker.min.js`,
       corePath: `${TESS_CDN}/tesseract-core.wasm.js`,
-      langPath: LANG_BASE,
-    } as any);  // 👈 强制断言为 any，忽略旧类型定义
+      langPath: LANG_BASE, // 必须以 / 结尾
+      // logger: m => console.log(m), // 需要时打开
+    });
 
     const { data } = await worker.recognize(input);
     await worker.terminate();
