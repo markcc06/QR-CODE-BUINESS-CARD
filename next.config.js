@@ -1,18 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    // 这些包不要被打到 bundle 里，保持原样随函数一起部署
+    // 让 Next 在服务端“外部包”处理，避免把原生 addon 打坏
     serverComponentsExternalPackages: ['tesseract.js', 'sharp', 'node-fetch'],
 
-    // 把 worker/wasm/以及 sharp 的原生二进制都打进 /api/recognize-card 函数
+    // 把 worker/wasm/语言数据 & sharp 的二进制文件追踪进产物
     outputFileTracingIncludes: {
+      // 你的 API 路由目录（保持与你项目一致）
       '/app/api/recognize-card/*': [
-        './node_modules/sharp/**/*',
-        './node_modules/tesseract.js/**/*',
-        './node_modules/worker-script/**/*',
-        './node_modules/tesseract-core.wasm',          // 保险起见
-        './node_modules/tesseract.js-core/**/*',
-        './node_modules/@tesseract.js-data/**/**/*',
+        './node_modules/**/tesseract*.**',
+        './node_modules/**/worker-script/**',
+        './node_modules/**/tesseract-core.wasm',
+        './node_modules/**/@tesseract.js-data/**',
+        // 关键：把 sharp 的原生二进制也带上
+        './node_modules/sharp/**/*'
       ],
     },
   },
