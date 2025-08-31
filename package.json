@@ -79,5 +79,12 @@
     "eslint-config-next": "13.5.1",
     "prettier": "^3.6.2",
     "typescript": "5.2.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "tesseract.js",
+      "protobufjs"
+    ]
   }
 }
