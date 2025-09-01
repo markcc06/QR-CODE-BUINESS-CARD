@@ -84,13 +84,5 @@
     "prettier": "^3.6.2",
     "typescript": "5.2.2"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp",
-      "@img/sharp-linux-x64",
-      "@img/sharp-libvips-linux-x64",
-      "tesseract.js",
-      "protobufjs"
-    ]
-  }
+  "pnpm": {}
 }
