@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 import { NextResponse } from "next/server";
-import { createWorker } from "tesseract.js";
+import Tesseract from "tesseract.js";
 import { extractFields } from "@/lib/extractFields";
 
 // 允许控制台查看真实错误（Vercel Functions 里也能看到）
@@ -19,8 +19,6 @@ const LANG_BASE_RAW =
   process.env.NEXT_PUBLIC_TESS_LANG_BASE || process.env.TESS_LANG_BASE || "";
 const LANG_BASE = LANG_BASE_RAW.endsWith("/") ? LANG_BASE_RAW : LANG_BASE_RAW + "/";
 
-// 固定 worker / core 走 CDN（避免被打包器裁剪）
-const TESS_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/";
 
 // 为了避免 Vercel 上因缺少 linux-x64 的 sharp 二进制导致函数直接崩溃，
 // 默认在生产环境（含 Vercel）关闭服务端 sharp 预处理。
@@ -94,14 +92,9 @@ export async function POST(req: Request) {
     const input = await preprocess(Buffer.from(await file.arrayBuffer()));
     console.log("[OCR] start recognize, langBase:", LANG_BASE, "input bytes:", input.length);
 
-    const worker = await createWorker("eng", 1, {
-      workerPath: `${TESS_CDN}worker.min.js`,
-      corePath: `${TESS_CDN}tesseract-core.wasm.js`,
-      langPath: LANG_BASE, // <- 只从你的 Supabase 取语言包
+    const { data } = await Tesseract.recognize(input, "eng", {
+      langPath: LANG_BASE,
     });
-
-    const { data } = await worker.recognize(input);
-    await worker.terminate();
 
     const rawText = (data?.text || "").trim();
     if (!rawText) return json({ error: "Empty OCR result" }, 422);
