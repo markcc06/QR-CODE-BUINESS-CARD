@@ -2,6 +2,10 @@
   "name": "nextjs",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@9.12.2",
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -83,6 +87,8 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "sharp",
+      "@img/sharp-linux-x64",
+      "@img/sharp-libvips-linux-x64",
       "tesseract.js",
       "protobufjs"
     ]
