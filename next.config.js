@@ -1,19 +1,29 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    // 让 Next 在服务端“外部包”处理，避免把原生 addon 打坏
-    serverComponentsExternalPackages: ['tesseract.js', 'sharp', 'node-fetch'],
+    // 在服务端保持这些包为外部依赖（不要把它们打进函数包），避免打包时破坏二进制
+    serverComponentsExternalPackages: [
+      'tesseract.js',
+      'sharp',
+      'node-fetch',
+      '@img/sharp-linux-x64',
+      '@img/sharp-libvips-linux-x64',
+    ],
 
-    // 把 worker/wasm/语言数据 & sharp 的二进制文件追踪进产物
+    // 让 Next 在为函数做 output tracing 时，把 tesseract 和 sharp 的二进制/资源也一起带上
     outputFileTracingIncludes: {
-      // 你的 API 路由目录（保持与你项目一致）
-      '/app/api/recognize-card/*': [
-        './node_modules/**/tesseract*.**',
-        './node_modules/**/worker-script/**',
-        './node_modules/**/tesseract-core.wasm',
-        './node_modules/**/@tesseract.js-data/**',
-        // 关键：把 sharp 的原生二进制也带上
-        './node_modules/sharp/**/*'
+      // ⚠️ 路径写成相对项目根目录的形式（不要以 / 开头）
+      'app/api/recognize-card/*': [
+        // tesseract runtime & language data
+        './node_modules/**/tesseract*.*',
+        './node_modules/**/worker-script/**/*',
+        './node_modules/**/tesseract-core*.wasm',
+        './node_modules/**/@tesseract.js-data*/**/*',
+
+        // sharp 二进制（cross‑platform 预编译件）
+        './node_modules/sharp/**/*',
+        './node_modules/@img/sharp-linux-x64/**/*',
+        './node_modules/@img/sharp-libvips-linux-x64/**/*',
       ],
     },
   },
