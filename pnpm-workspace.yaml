@@ -1,2 +1,6 @@
+packages:
+  - .
+
+# Keep any workspace-wide pnpm settings below
 ignoredBuiltDependencies:
   - unrs-resolver
