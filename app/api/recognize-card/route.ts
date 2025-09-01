@@ -19,6 +19,9 @@ const LANG_BASE_RAW =
   process.env.NEXT_PUBLIC_TESS_LANG_BASE || process.env.TESS_LANG_BASE || "";
 const LANG_BASE = LANG_BASE_RAW.endsWith("/") ? LANG_BASE_RAW : LANG_BASE_RAW + "/";
 
+// 浏览器端 tesseract.js 的 CDN（仅在浏览器环境使用；本文件实际在 Node 端运行）
+const TESS_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/";
+
 
 // 为了避免 Vercel 上因缺少 linux-x64 的 sharp 二进制导致函数直接崩溃，
 // 默认在生产环境（含 Vercel）关闭服务端 sharp 预处理。
@@ -92,9 +95,24 @@ export async function POST(req: Request) {
     const input = await preprocess(Buffer.from(await file.arrayBuffer()));
     console.log("[OCR] start recognize, langBase:", LANG_BASE, "input bytes:", input.length);
 
-    const { data } = await Tesseract.recognize(input, "eng", {
-      langPath: LANG_BASE,
-    });
+    // Node / Browser 分开配置：
+    // 这里是服务端（Node），不要覆盖 worker/core，只指定语言数据与缓存目录；
+    // 这样既能避免 linux-x64 二进制问题，也能把 eng.traineddata 缓存到 /tmp，加速后续调用。
+    const isNode = !!(typeof process !== "undefined" && (process as any).versions?.node);
+    const ocrOptions: Record<string, any> = isNode
+      ? {
+          langPath: LANG_BASE,
+          cachePath: "/tmp/tess-cache",      // Vercel 可写目录
+          cacheMethod: "writeToCache",
+        }
+      : {
+          // 仅在浏览器端才会用到（此 API 实际跑在服务端，分支不会触发）
+          workerPath: `${TESS_CDN}worker.min.js`,
+          corePath: `${TESS_CDN}tesseract-core.wasm`,
+          langPath: LANG_BASE,
+        };
+
+    const { data } = await Tesseract.recognize(input, "eng", ocrOptions);
 
     const rawText = (data?.text || "").trim();
     if (!rawText) return json({ error: "Empty OCR result" }, 422);
