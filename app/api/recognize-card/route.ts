@@ -6,6 +6,8 @@ export const maxDuration = 60;
 import { NextResponse } from "next/server";
 import Tesseract from "tesseract.js";
 import { extractFields } from "@/lib/extractFields";
+import fs from "node:fs";
+import path from "node:path";
 
 // 允许控制台查看真实错误（Vercel Functions 里也能看到）
 const CORS_HEADERS = {
@@ -18,6 +20,15 @@ const CORS_HEADERS = {
 const LANG_BASE_RAW =
   process.env.NEXT_PUBLIC_TESS_LANG_BASE || process.env.TESS_LANG_BASE || "";
 const LANG_BASE = LANG_BASE_RAW.endsWith("/") ? LANG_BASE_RAW : LANG_BASE_RAW + "/";
+
+// 本地优先：如果项目里自带 tessdata，则优先使用本地路径，避免线上首次请求去下载语言包造成超时
+const LOCAL_LANG_DIR = path.join(process.cwd(), "tessdata");
+const HAS_LOCAL_ENG =
+  fs.existsSync(path.join(LOCAL_LANG_DIR, "eng.traineddata")) ||
+  fs.existsSync(path.join(LOCAL_LANG_DIR, "eng.traineddata.gz"));
+const EFFECTIVE_LANG_BASE = HAS_LOCAL_ENG
+  ? LOCAL_LANG_DIR + path.sep
+  : LANG_BASE;
 
 // 浏览器端 tesseract.js 的 CDN（仅在浏览器环境使用；本文件实际在 Node 端运行）
 const TESS_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/";
@@ -50,7 +61,7 @@ export async function GET() {
   return json({
     ok: true,
     hint: 'Use POST with "multipart/form-data" and field name "file".',
-    langBase: LANG_BASE || null,
+    langBase: EFFECTIVE_LANG_BASE || null,
     nodeEnv: process.env.NODE_ENV || null,
   });
 }
@@ -67,7 +78,7 @@ async function preprocess(buffer: Buffer): Promise<Buffer> {
     const sharp: any = (await import("sharp")).default;
     const out = await sharp(buffer)
       .rotate()
-      .resize({ width: 2000, withoutEnlargement: false })
+      .resize({ width: 1400, withoutEnlargement: false })
       .grayscale()
       .normalize()
       .toFormat("png")
@@ -93,7 +104,7 @@ export async function POST(req: Request) {
     }
 
     const input = await preprocess(Buffer.from(await file.arrayBuffer()));
-    console.log("[OCR] start recognize, langBase:", LANG_BASE, "input bytes:", input.length);
+    console.log("[OCR] start recognize, langBase:", EFFECTIVE_LANG_BASE, "input bytes:", input.length);
 
     // Node / Browser 分开配置：
     // 这里是服务端（Node），不要覆盖 worker/core，只指定语言数据与缓存目录；
@@ -101,15 +112,19 @@ export async function POST(req: Request) {
     const isNode = !!(typeof process !== "undefined" && (process as any).versions?.node);
     const ocrOptions: Record<string, any> = isNode
       ? {
-          langPath: LANG_BASE,
+          // Node 环境：不要指定 workerPath/corePath，交给 tesseract.js 自己用 worker_threads
+          langPath: EFFECTIVE_LANG_BASE,      // 本地优先，其次 ENV
           cachePath: "/tmp/tess-cache",      // Vercel 可写目录
           cacheMethod: "writeToCache",
+          // 轻度加速的常用配置（可按需微调）
+          tessedit_pageseg_mode: 6,            // 偏单块文本
+          preserve_interword_spaces: 1,
         }
       : {
-          // 仅在浏览器端才会用到（此 API 实际跑在服务端，分支不会触发）
+          // 浏览器兜底（此 API 实际在服务端，不会走到这里）
           workerPath: `${TESS_CDN}worker.min.js`,
           corePath: `${TESS_CDN}tesseract-core.wasm`,
-          langPath: LANG_BASE,
+          langPath: EFFECTIVE_LANG_BASE,
         };
 
     const { data } = await Tesseract.recognize(input, "eng", ocrOptions);

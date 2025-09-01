@@ -15,6 +15,7 @@ const nextConfig = {
       // ⚠️ 路径写成相对项目根目录的形式（不要以 / 开头）
       'app/api/recognize-card/*': [
         // tesseract runtime & language data
+        './tessdata/**',
         './node_modules/**/tesseract*.*',
         './node_modules/**/worker-script/**/*',
         './node_modules/**/tesseract-core*.wasm',
