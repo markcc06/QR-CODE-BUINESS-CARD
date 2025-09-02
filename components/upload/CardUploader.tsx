@@ -9,6 +9,18 @@ import {
   compressDataURL,
   dataURLByteSize,
 } from '@/lib/image';
+import { extractFields } from '@/lib/extractFields';
+
+function dataURLToBlob(dataURL: string): Blob {
+  const [meta, b64] = dataURL.split(',');
+  const match = /data:(.*?);base64/.exec(meta || '');
+  const mime = (match && match[1]) || 'image/png';
+  const binary = atob(b64 || '');
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
 
 export default function CardUploader() {
   const [cardImage, setCardImage] = useState<string | null>(null);
@@ -56,6 +68,13 @@ export default function CardUploader() {
     setRecognizing(true);
     setRecognizeProgress(0);
 
+    // 后台预热（若还未预热成功）
+    try {
+      const ctrl = new AbortController();
+      setTimeout(() => ctrl.abort('warmup_timeout'), 45000);
+      fetch('/api/recognize-card?warmup=1', { signal: ctrl.signal, cache: 'no-store' }).catch(() => {});
+    } catch {}
+
     // 伪进度条（提升感知）
     let p = 0;
     const fake = setInterval(() => {
@@ -66,39 +85,51 @@ export default function CardUploader() {
 
     // 真·超时控制（首启 Tesseract 可能较慢，可先放宽）
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 90_000); // 90s
+    const timeout = setTimeout(() => controller.abort('timeout'), 150_000); // 150s
 
     try {
       // dataURL -> Blob -> FormData
-      const blob = await (await fetch(cardImage)).blob();
+      const blob = dataURLToBlob(cardImage);
       const fd = new FormData();
+      fd.append('dataUrl', cardImage);
       fd.append('file', blob, 'card.jpg');
 
       const res = await fetch('/api/recognize-card', {
         method: 'POST',
         body: fd,
         signal: controller.signal,
+        cache: 'no-store',
       });
 
       if (!res.ok) {
         // 422 = 空结果；其他 = 服务器错误
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error || `HTTP ${res.status}`);
+        const err = await res.json().catch(() => ({} as any));
+        const msg = err?.error || `HTTP ${res.status}`;
+        const hint = err?.hint ? `\nHint: ${err.hint}` : '';
+        throw new Error(msg + hint);
       }
 
       const data = await res.json();
 
+      // 统一从 { ok, text } 中拿原始文本，再用 extractFields 解析结构化字段
+      const rawText: string =
+        (data && (data.text || data.rawText || data?.data?.text)) || '';
+      if (!rawText) {
+        throw new Error('Empty OCR text');
+      }
+      const parsed: any = extractFields(rawText) || {};
+
       // 将识别结果回填到表单（没有的字段用空串兜底）
       setPerson({
-        givenName: data.firstName || '',
-        familyName: data.lastName || '',
-        jobTitle: data.jobTitle || '',
-        organization: data.company || '',
-        email: data.email || '',
-        phone: data.phone || '',
-        website: data.website || '',
-        location: data.address || '',
-        socials: data.socials || [],
+        givenName: parsed.firstName || '',
+        familyName: parsed.lastName || '',
+        jobTitle: parsed.jobTitle || '',
+        organization: parsed.company || '',
+        email: parsed.email || '',
+        phone: parsed.phone || '',
+        website: parsed.website || '',
+        location: parsed.address || '',
+        socials: parsed.socials || [],
       });
 
       // 默认回到 Basics + 选一个模板
@@ -106,7 +137,7 @@ export default function CardUploader() {
       setActiveTab('basics');
       setRecognizeProgress(100);
     } catch (e: any) {
-      if (e?.name === 'AbortError') {
+      if (e?.name === 'AbortError' || e === 'timeout' || e?.message === 'timeout') {
         alert('Timeout: OCR took too long. Try a clearer photo or retry.');
       } else {
         console.error('recognize error', e);

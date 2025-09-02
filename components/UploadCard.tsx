@@ -25,6 +25,12 @@ export default function UploadCard({ className }: { className?: string }) {
 
   const handleClick = () => {
     if (loading) return;
+    // 先后台预热 OCR（不影响用户交互）
+    try {
+      const ctrl = new AbortController();
+      setTimeout(() => ctrl.abort('warmup_timeout'), 45000);
+      fetch('/api/recognize-card?warmup=1', { signal: ctrl.signal, cache: 'no-store' }).catch(() => {});
+    } catch {}
     inputRef.current?.click();
   };
 
@@ -47,9 +53,9 @@ export default function UploadCard({ className }: { className?: string }) {
     setLoading(true);
     setRecognizing(true);
 
-    // 60s 超时，避免悬挂
+    // 120s 超时，避免悬挂（首次加载可能较慢）
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 60_000);
+    const timeout = setTimeout(() => controller.abort('timeout'), 120_000);
 
     try {
       const fd = new FormData();
@@ -59,8 +65,7 @@ export default function UploadCard({ className }: { className?: string }) {
         method: "POST",
         body: fd,
         signal: controller.signal,
-        // 不要手动设置 Content-Type，让浏览器带表单边界
-        // credentials 默认 same-origin 即可
+        cache: 'no-store',
       });
 
       const raw = await res.text();
@@ -73,22 +78,41 @@ export default function UploadCard({ className }: { className?: string }) {
       }
 
       if (!res.ok || data?.error) {
-        const msg = data?.error || `${res.status} ${res.statusText}`;
-        // 针对常见误用给出提示
+        const hint = (data as any)?.hint ? `\nHint: ${(data as any).hint}` : '';
+        const msg = (data as any)?.error || `${res.status} ${res.statusText}`;
         if (res.status === 405) {
-          throw new Error("405 Method Not Allowed: API expects POST with form-data field `file`.");
+          throw new Error("405 Method Not Allowed: API expects POST with form-data field `file`." + hint);
         }
         if (res.status === 404) {
-          throw new Error("404 Not Found: /api/recognize-card route missing or build not updated.");
+          throw new Error("404 Not Found: /api/recognize-card route missing or build not updated." + hint);
         }
-        throw new Error(msg);
+        throw new Error(msg + hint);
+      }
+
+      // 规范化服务端返回：既支持 raw text，也支持结构化字段
+      const payload: OcrResult = {
+        rawText: (data as any)?.text ?? "",
+        firstName: (data as any)?.firstName,
+        lastName: (data as any)?.lastName,
+        jobTitle: (data as any)?.jobTitle,
+        company: (data as any)?.company,
+        email: (data as any)?.email,
+        phone: (data as any)?.phone,
+        website: (data as any)?.website,
+        location: (data as any)?.location,
+      };
+
+      const hasText = !!payload.rawText?.trim();
+      const hasAnyField = !!(payload.firstName || payload.lastName || payload.jobTitle || payload.company || payload.email || payload.phone || payload.website || payload.location);
+      if (!hasText && !hasAnyField) {
+        throw new Error("Empty OCR result. Please try a clearer image.");
       }
 
       // 广播识别成功事件（避免跨 RSC 传函数）
-      window.dispatchEvent(new CustomEvent<OcrResult>("ocr-success", { detail: data }));
-      toast.success("OCR recognition successful. Fields filled.");
+      window.dispatchEvent(new CustomEvent<OcrResult>("ocr-success", { detail: payload }));
+      toast.success("OCR recognition successful.");
     } catch (err: any) {
-      if (err?.name === "AbortError") {
+      if (err?.name === "AbortError" || err === 'timeout' || err?.message === 'timeout') {
         toast.error("OCR timed out. Please try a clearer image.");
       } else {
         toast.error(`OCR failed: ${err?.message || String(err)}`);
