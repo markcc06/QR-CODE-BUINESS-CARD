@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, Loader2, Crop } from 'lucide-react';
 import { useCardStore } from '@/store/cardStore';
 import CropperModal from './CropperModal';
@@ -10,6 +10,7 @@ import {
   dataURLByteSize,
 } from '@/lib/image';
 import { extractFields } from '@/lib/extractFields';
+import { prewarmClientOCR, recognizeAndExtract } from '@/lib/client-ocr';
 
 function dataURLToBlob(dataURL: string): Blob {
   const [meta, b64] = dataURL.split(',');
@@ -25,6 +26,7 @@ function dataURLToBlob(dataURL: string): Blob {
 export default function CardUploader() {
   const [cardImage, setCardImage] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
+  const USE_SERVER = process.env.NEXT_PUBLIC_OCR_MODE === 'server';
 
   const {
     setActiveTab,
@@ -35,6 +37,11 @@ export default function CardUploader() {
     setRecognizing,
     setRecognizeProgress,
   } = useCardStore();
+
+  // 组件挂载后即预热 OCR（静默失败即可）
+  useEffect(() => {
+    prewarmClientOCR().catch(() => {});
+  }, []);
 
   /** 选择本地名片图片后，做一次压缩，存为 dataURL 以便预览/裁剪 */
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +72,86 @@ export default function CardUploader() {
   const recognizeCard = async () => {
     if (!cardImage || isRecognizing) return;
 
+    // ------- 分支 A：客户端 OCR（默认）-------
+    if (!USE_SERVER) {
+      setRecognizing(true);
+      setRecognizeProgress(0);
+
+      try {
+        // 先尝试预热（允许静默失败）
+        try {
+          await prewarmClientOCR((m) => {
+            const p = Math.round((m.progress ?? 0) * 80);
+            setRecognizeProgress(p);
+          });
+        } catch {}
+
+        // dataURL -> Blob
+        const blob = dataURLToBlob(cardImage);
+
+        const { ok, text, confidence, fields } = await recognizeAndExtract(blob, {
+          maxSide: 1800,
+          onProgress: (m) => {
+            const p = Math.round((m.progress ?? 0) * 98);
+            setRecognizeProgress(p);
+          },
+        });
+
+        const plain = (text || '').trim();
+        if (!plain) throw new Error('Empty OCR text');
+
+        const f: any = fields ?? extractFields(plain) ?? {};
+
+        // 调试日志：在本地可见，线上不会打爆控制台
+        if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
+          console.debug('[OCR] client result', { len: plain.length, confidence, ok, fields: f });
+        }
+
+        // 同步派发事件，兼容其它组件/旧逻辑的监听（把结构化字段也带上）
+        const detail = {
+          rawText: plain,
+          firstName: f.firstName,
+          lastName: f.lastName,
+          jobTitle: f.jobTitle,
+          company: f.company,
+          email: f.email,
+          phone: f.phone,
+          website: f.website,
+          location: f.address || f.location,
+        };
+        window.dispatchEvent(new CustomEvent('ocr-success', { detail }));
+        window.dispatchEvent(new CustomEvent('ocrResult', { detail }));
+
+        // 解析并回填表单
+        setPerson({
+          firstName: f.firstName || '',
+          lastName: f.lastName || '',
+          jobTitle: f.jobTitle || '',
+          company: f.company || '',
+          email: f.email || '',
+          phone: f.phone || '',
+          website: f.website || '',
+          location: f.address || f.location || '',
+          socials: f.socials || [],
+        } as any);
+
+        setTemplate('classic');
+        setActiveTab('basics');
+        setRecognizeProgress(100);
+      } catch (e: any) {
+        console.error('client ocr error', e);
+        alert(e?.message || 'Recognition failed. Please try again with a clearer photo.');
+        setRecognizeProgress(0);
+      } finally {
+        setTimeout(() => {
+          setRecognizing(false);
+          setRecognizeProgress(0);
+        }, 500);
+      }
+      return;
+    }
+
+    // ------- 分支 B：服务端兜底（仅当 NEXT_PUBLIC_OCR_MODE=server 时启用）-------
     setRecognizing(true);
     setRecognizeProgress(0);
 
@@ -119,20 +206,18 @@ export default function CardUploader() {
       }
       const parsed: any = extractFields(rawText) || {};
 
-      // 将识别结果回填到表单（没有的字段用空串兜底）
       setPerson({
-        givenName: parsed.firstName || '',
-        familyName: parsed.lastName || '',
+        firstName: parsed.firstName || '',
+        lastName: parsed.lastName || '',
         jobTitle: parsed.jobTitle || '',
-        organization: parsed.company || '',
+        company: parsed.company || '',
         email: parsed.email || '',
         phone: parsed.phone || '',
         website: parsed.website || '',
-        location: parsed.address || '',
+        location: parsed.address || parsed.location || '',
         socials: parsed.socials || [],
-      });
+      } as any);
 
-      // 默认回到 Basics + 选一个模板
       setTemplate('classic');
       setActiveTab('basics');
       setRecognizeProgress(100);
