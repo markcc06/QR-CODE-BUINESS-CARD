@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://cardspark.xyz/sitemap.xml',
+    sitemap: 'https://www.scanqrly.xyz/sitemap.xml',
   }
 }
