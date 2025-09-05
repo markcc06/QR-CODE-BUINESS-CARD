@@ -1,15 +1,13 @@
-
-
 // app/sitemap.ts
 // Stable minimal sitemap for CardSpark. Keep this simple to avoid build-time errors.
 import type { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://www.cardspark.xyz'
+  const base = 'https://www.cardspark.xyz' // 域名已统一到 www.cardspark.xyz
 
   return [
     {
-      url: `${base}/`,
+      url: 'https://www.cardspark.xyz/',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1.0,
