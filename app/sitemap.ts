@@ -3,11 +3,11 @@
 import type { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://www.scanqrly.xyz' // 域名已统一到 www.scanqrly.xyz
+  const base = 'https://www.cardspark.xyz'
 
   return [
     {
-      url: 'https://www.scanqrly.xyz/',
+      url: 'https://www.cardspark.xyz/',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1.0,
