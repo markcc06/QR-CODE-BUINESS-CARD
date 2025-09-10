@@ -1,18 +1,22 @@
 // app/sitemap.ts
-// Stable minimal sitemap for CardSpark. Keep this simple to avoid build-time errors.
-import type { MetadataRoute } from 'next'
+// Minimal, SSR-safe sitemap using env-based absolute URLs (no hardcoding).
+import type { MetadataRoute } from 'next';
+import { absoluteUrl } from '@/lib/seo';
+import { getPosts } from '@/content/posts';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://www.cardspark.xyz'
-
+  const now = new Date();
+  const posts = getPosts().map((p) => ({
+    url: absoluteUrl(`/blog/${p.slug}`),
+    lastModified: p.date ? new Date(p.date) : now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.5,
+  }));
   return [
-    {
-      url: 'https://www.cardspark.xyz/',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1.0,
-    },
-    // 👉 If you later add stable pages (e.g., /guide, /pricing), append entries here.
-    // Do NOT import code or fetch data at build-time to keep this function SSR-safe.
-  ]
+    { url: absoluteUrl('/'), lastModified: now, changeFrequency: 'weekly', priority: 1.0 },
+    { url: absoluteUrl('/privacy'), lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
+    { url: absoluteUrl('/feedback'), lastModified: now, changeFrequency: 'monthly', priority: 0.4 },
+    { url: absoluteUrl('/blog'), lastModified: now, changeFrequency: 'weekly', priority: 0.6 },
+    ...posts,
+  ];
 }

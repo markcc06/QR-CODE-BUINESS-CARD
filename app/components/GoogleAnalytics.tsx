@@ -1,12 +1,12 @@
 "use client";
 
-import Script from "next/script";
+import Script from 'next/script';
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export default function GoogleAnalytics() {
-  // 若未配置环境变量，则不注入脚本，避免报错
-  if (!GA_ID) return null;
+  // 仅在生产且配置了 GA_ID 时注入，避免 dev/preview 环境污染
+  if (process.env.NODE_ENV !== 'production' || !GA_ID) return null;
 
   return (
     <>
@@ -19,7 +19,7 @@ export default function GoogleAnalytics() {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);} 
           gtag('js', new Date());
-          gtag('config', '${GA_ID}');
+          gtag('config', '${GA_ID}', { anonymize_ip: true });
         `}
       </Script>
     </>

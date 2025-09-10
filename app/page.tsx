@@ -8,8 +8,8 @@ import { generateQRCode } from '@/lib/qrcode';
 import CardForm from '@/components/CardForm';
 import CardPreview from '@/components/CardPreview';
 import { MessageCircle, Sparkles } from 'lucide-react';
-import Link from 'next/link';
 import RecognizeOverlay from '@/components/common/RecognizeOverlay';
+import SiteHeader from '@/components/SiteHeader';
 
 const defaultTheme: Theme = {
   primary: '#0ea5e9',
@@ -82,30 +82,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
-      {/* Header */}
-      <header className="border-b border-white/20 backdrop-blur-sm bg-white/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="w-8 h-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">CardSpark</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/feedback">
-                <Button variant="outline" size="sm">
-                  <MessageCircle className="w-4 h-4 mr-1" />
-                  Feedback
-                </Button>
-              </Link>
-              <Link href="/privacy">
-                <Button variant="ghost" size="sm">
-                  Privacy
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

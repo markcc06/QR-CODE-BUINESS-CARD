@@ -1,0 +1,14 @@
+// app/scan/layout.tsx
+import type { Metadata } from 'next';
+import { absoluteUrl } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Scan Card | CardSpark',
+  description: 'OCR your business card and auto-fill fields.',
+  alternates: { canonical: absoluteUrl('/scan') },
+  // 若不想收录 /scan： robots: { index: false, follow: true },
+};
+
+export default function ScanLayout({ children }: { children: React.ReactNode }) {
+  return children;
+}

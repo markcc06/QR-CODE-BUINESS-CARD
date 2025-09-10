@@ -1,4 +1,5 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { absoluteUrl } from '@/lib/seo';
 import PublicCard from './PublicCard';
 
 interface PageProps {
@@ -6,34 +7,23 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  // In a real app, you'd fetch card data here
+  const canonical = absoluteUrl(`/c/${params.id}`);
   return {
     title: 'Digital Business Card | CardSpark',
-    description: 'View this digital business card created with CardSpark',
+    description: 'View this digital business card created with CardSpark.',
+    alternates: { canonical },
+    robots: { index: false, follow: true },
     openGraph: {
-      title: 'Digital Business Card',
-      description: 'View this digital business card created with CardSpark',
-      type: 'profile',
-      images: ['/og-card.png'],
+      type: 'website',
+      title: 'Digital Business Card | CardSpark',
+      description: 'View this digital business card created with CardSpark.',
+      url: canonical,
+      images: [{ url: absoluteUrl('/og-default.png'), width: 1200, height: 630 }],
     },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'Digital Business Card',
-      description: 'View this digital business card created with CardSpark',
-    },
+    twitter: { card: 'summary_large_image' },
   };
 }
 
-// 添加这个函数来列出所有可能的卡片ID
-export async function generateStaticParams() {
-  // 返回你所有可能的卡片ID
-  return [
-    { id: 'tcli97almi' }, 
-    // 添加更多ID...
-    { id: 'sample1' },
-    { id: 'sample2' }
-  ];
-}
 
 export default function PublicCardPage({ params }: PageProps) {
   return <PublicCard cardId={params.id} />;
