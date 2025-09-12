@@ -29,13 +29,13 @@ export default function FeedbackForm({ onSubmitAction }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Feedback</label>
+        <label className="block text-sm font-medium text-gray-700">We Value Your Feedback</label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           rows={5}
           className="mt-1 block w-full rounded-md border-gray-200 shadow-sm"
-          placeholder="Tell us what you think..."
+          placeholder="Tell us how we can improve..."
           required
         />
       </div>
@@ -53,13 +53,13 @@ export default function FeedbackForm({ onSubmitAction }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Rating</label>
+          <label className="block text-sm font-medium text-gray-700">Select a rating</label>
           <select
             value={rating}
             onChange={(e) => setRating(e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-200 shadow-sm"
           >
-            <option value="">--</option>
+            <option value="">Select a rating</option>
             <option value="5">5 — Excellent</option>
             <option value="4">4 — Good</option>
             <option value="3">3 — Okay</option>
@@ -70,8 +70,12 @@ export default function FeedbackForm({ onSubmitAction }: Props) {
       </div>
 
       <div className="text-right">
-        <Button type="submit">Send Feedback</Button>
+        <Button type="submit">Submit Feedback</Button>
       </div>
+
+      <p className="text-sm text-gray-500">
+        Your feedback is anonymous unless you provide an email. It helps us improve.
+      </p>
     </form>
   );
 }

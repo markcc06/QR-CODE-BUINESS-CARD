@@ -57,7 +57,7 @@ export default function FeedbackPage() {
       </div>
 
       <div className="rounded-2xl border bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold mb-6">Feedback</h1>
+        <h1 className="text-2xl font-semibold mb-6">We Value Your Feedback</h1>
 
         {done && (
           <div className="mb-4 rounded-md border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-800">
@@ -72,13 +72,13 @@ export default function FeedbackPage() {
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="msg">Tell us what you think…</Label>
+            <Label htmlFor="msg">Tell us how we can improve...</Label>
             <Textarea
               id="msg"
               rows={6}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Write your feedback here…"
+              placeholder="Tell us how we can improve..."
               disabled={submitting}
             />
           </div>
@@ -97,14 +97,14 @@ export default function FeedbackPage() {
             </div>
 
             <div>
-              <Label>Rating</Label>
+              <Label>Select a rating</Label>
               <Select
                 value={rating}
                 onValueChange={setRating}
                 disabled={submitting}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="--" />
+                  <SelectValue placeholder="Select a rating" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">1</SelectItem>
@@ -119,13 +119,13 @@ export default function FeedbackPage() {
 
           <div className="pt-2">
             <Button type="submit" disabled={submitting}>
-              {submitting ? 'Sending…' : 'Send Feedback'}
+              {submitting ? 'Sending…' : 'Submit Feedback'}
             </Button>
           </div>
         </form>
 
         <p className="text-xs text-gray-500 mt-6">
-          Your feedback is anonymous unless you choose to provide your email. We use feedback to prioritize improvements.
+          Your feedback is anonymous unless you provide an email. It helps us improve.
         </p>
       </div>
     </div>

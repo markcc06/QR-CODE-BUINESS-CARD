@@ -33,9 +33,9 @@ const themeChoices: { label: string; theme: Theme }[] = [
 const templates: { value: CardTemplate; label: string; description: string }[] = [
   { value: 'classic',  label: 'Classic',        description: 'Traditional layout with photo and contact info' },
   { value: 'minimal',  label: 'Minimal',        description: 'Clean and simple design' },
-  { value: 'accent',   label: 'Accent Bar',     description: 'Modern design with colored accent bar' },
-  { value: 'left',     label: 'Left Avatar',    description: 'Sidebar layout with prominent photo' },
-  { value: 'centered', label: 'Centered Badge', description: 'Badge-style centered design' },
+  { value: 'accent',   label: 'Accent Bar',     description: 'Modern layout with a colored accent bar' },
+  { value: 'left',     label: 'Left Avatar',    description: 'Sidebar layout with profile photo' },
+  { value: 'centered', label: 'Centered Badge', description: 'Centered badge-style layout' },
 ];
 
 /** 缩略图：只做简化示意，保持轻量 */
@@ -184,14 +184,16 @@ export default function CardForm({ card, onCardChange, onGenerate }: CardFormPro
       <div className="flex items-center justify-between gap-3 whitespace-nowrap">
         <h2 className="text-2xl font-bold text-gray-900">Create Your Card</h2>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <UploadCard />
+          <UploadCard>
+            Upload Image
+          </UploadCard>
           <Button variant="outline" size="sm" onClick={clearForm} className="text-gray-600" disabled={disabled}>
             <RotateCcw className="w-4 h-4 mr-1" />
             Reset
           </Button>
           <Button onClick={onGenerate} size="sm" className="bg-blue-600 hover:bg-blue-700" disabled={disabled}>
             <Share2 className="w-4 h-4 mr-1" />
-            Generate
+            Create Card
           </Button>
         </div>
       </div>
@@ -200,7 +202,7 @@ export default function CardForm({ card, onCardChange, onGenerate }: CardFormPro
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="basics" disabled={disabled}>Basics</TabsTrigger>
           <TabsTrigger value="social" disabled={disabled}>Social</TabsTrigger>
-          <TabsTrigger value="branding" disabled={disabled}>Branding</TabsTrigger>
+          <TabsTrigger value="branding" disabled={disabled}>Design</TabsTrigger>
         </TabsList>
 
         {/* Basics */}
@@ -300,7 +302,7 @@ export default function CardForm({ card, onCardChange, onGenerate }: CardFormPro
           </div>
 
           <div>
-            <Label htmlFor="bio">Bio</Label>
+            <Label htmlFor="bio">About Me</Label>
             <Textarea
               id="bio"
               value={card.person?.bio ?? ''}
@@ -356,7 +358,7 @@ export default function CardForm({ card, onCardChange, onGenerate }: CardFormPro
 
           {(!card.person?.socials || card.person.socials.length === 0) && (
             <p className="text-gray-500 text-center py-8">
-              No social links added yet. Click "Add Social" to get started.
+              No social links yet. Click "Add Social" to add one.
             </p>
           )}
         </TabsContent>

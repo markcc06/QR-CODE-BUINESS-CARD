@@ -28,9 +28,9 @@ export default function PrivacyPage() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
           <div className="text-center mb-8">
             <Shield className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy & Data</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy Policy & Data Protection</h1>
             <p className="text-gray-600">
-              Your privacy is our priority. Here's how CardSpark handles your data.
+              Learn how CardSpark stores, protects, and uses your data.
             </p>
           </div>
 
@@ -38,32 +38,32 @@ export default function PrivacyPage() {
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               <div className="text-center p-6 bg-green-50 rounded-xl">
                 <Eye className="w-12 h-12 text-green-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No OCR</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No OCR Scanning</h3>
                 <p className="text-sm text-gray-600">
-                  We don't use OCR technology. Uploaded paper cards are only displayed for your reference.
+                  We do not use OCR (Optical Character Recognition). Any uploaded paper cards are displayed as images only and never processed or analyzed.
                 </p>
               </div>
               
               <div className="text-center p-6 bg-blue-50 rounded-xl">
                 <Database className="w-12 h-12 text-blue-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Local Storage</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Local Data Storage</h3>
                 <p className="text-sm text-gray-600">
-                  Your cards are stored locally in your browser. We don't have access to your personal data.
+                  All your business card data is stored locally in your browser using localStorage. CardSpark cannot access, view, or collect your personal information.
                 </p>
               </div>
               
               <div className="text-center p-6 bg-purple-50 rounded-xl">
                 <Shield className="w-12 h-12 text-purple-600 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Tracking</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Tracking or Analytics</h3>
                 <p className="text-sm text-gray-600">
-                  We don't use analytics cookies or tracking scripts. Your browsing remains private.
+                  We do not use tracking cookies, analytics tools, or third-party scripts. Your browsing activity stays private and secure.
                 </p>
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How CardSpark Works</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How CardSpark Handles Your Data</h2>
             
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Data Storage</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Data Storage & Security</h3>
             <p className="text-gray-700 mb-4">
               All your business card data is stored locally in your browser using localStorage. This means:
             </p>
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
               <li>Your cards are only accessible from the browser where you created them</li>
             </ul>
 
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Image Uploads</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Image Uploads & Privacy</h3>
             <p className="text-gray-700 mb-4">
               When you upload images (avatars, logos, or paper cards):
             </p>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
               <li>No OCR (Optical Character Recognition) is performed on uploaded images</li>
             </ul>
 
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Public Cards</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Public Cards & Links</h3>
             <p className="text-gray-700 mb-4">
               When you generate a public card link:
             </p>
@@ -117,8 +117,7 @@ export default function PrivacyPage() {
 
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
             <p className="text-gray-700">
-              If you have questions about privacy or data handling, please contact us through the feedback form.
-              We're committed to transparency and protecting your privacy.
+              If you have any questions about privacy, security, or data handling, please contact us through our feedback form. We are committed to transparency and protecting your personal information.
             </p>
           </div>
         </div>

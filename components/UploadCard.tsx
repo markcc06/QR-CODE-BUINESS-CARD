@@ -56,7 +56,7 @@ export type OcrResult = {
   rawText?: string;
 };
 
-export default function UploadCard({ className }: { className?: string }) {
+export default function UploadCard({ className, children }: { className?: string; children?: React.ReactNode }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // 客户端 OCR hook（包含预热、进度与取消）
@@ -248,7 +248,7 @@ export default function UploadCard({ className }: { className?: string }) {
       />
       <Button type="button" onClick={handleClick} disabled={disabled} className={className}>
         <Upload className="w-4 h-4 mr-1" />
-        {disabled ? `Recognizing${running ? ` ${pct}%` : "..."}` : "Upload Card"}
+        {disabled ? `Recognizing${running ? ` ${pct}%` : "..."}` : (children ?? "Upload Card")}
       </Button>
     </>
   );

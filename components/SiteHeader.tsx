@@ -33,10 +33,10 @@ export default function SiteHeader({ subline }: Props) {
               Blog
             </Link>
             <Link href="/feedback" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline">
-              Feedback
+              Contact
             </Link>
             <Link href="/privacy" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline">
-              Privacy
+              Privacy Policy
             </Link>
           </nav>
         </div>

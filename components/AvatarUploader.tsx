@@ -73,7 +73,7 @@ export default function AvatarUploader({ value, onChangeAction }: Props) {
 
         <div className="flex gap-2">
           <Button type="button" onClick={triggerPicker}>
-            Upload Avatar
+            Upload Profile Photo
           </Button>
           {value && (
             <Button variant="outline" type="button" onClick={clear}>
@@ -82,6 +82,10 @@ export default function AvatarUploader({ value, onChangeAction }: Props) {
           )}
         </div>
       </div>
+
+      <p className="text-[13px] text-gray-500">
+        Recommended size: 200x200 px. The photo will be cropped to a circle and added to your vCard.
+      </p>
 
       {/* 裁剪弹层 */}
       {showCropper && src && (

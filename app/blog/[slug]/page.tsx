@@ -4,9 +4,9 @@ import { getPostBySlug, getPosts } from '@/content/posts';
 import { absoluteUrl } from '@/lib/seo';
 import JsonLd from '@/app/components/seo/JsonLd';
 
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 
-const MarkdownRenderer = dynamic(
+const MarkdownRenderer = nextDynamic(
   () => import('@/components/MarkdownRenderer'),
   {
     ssr: false,
@@ -17,6 +17,12 @@ const MarkdownRenderer = dynamic(
 );
 
 type Props = { params: { slug: string } };
+
+export const dynamic = 'force-static';
+
+export async function generateStaticParams() {
+  return getPosts().map((p) => ({ slug: p.slug }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(params.slug);
@@ -31,9 +37,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: post.excerpt,
       url,
-      images: [{ url: absoluteUrl('/og-default.png'), width: 1200, height: 630 }],
+      images: [{ url: absoluteUrl('/opengraph-image'), width: 1200, height: 630 }],
     },
-    twitter: { card: 'summary_large_image' },
+    twitter: {
+      card: 'summary_large_image',
+      images: [absoluteUrl('/opengraph-image')],
+    },
   };
 }
 
@@ -88,6 +97,31 @@ export default function BlogPostPage({ params }: Props) {
           ))}
         </ul>
       </section>
+      {/* Structured data: extra breadcrumb (script) */}
+      <script
+        type="application/ld+json"
+        // Using JSON.stringify to ensure valid JSON output
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Blog',
+                item: absoluteUrl('/blog'),
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: post.title,
+                item: absoluteUrl(`/blog/${post.slug}`),
+              },
+            ],
+          }),
+        }}
+      />
     </main>
   );
 }

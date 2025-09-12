@@ -9,13 +9,13 @@ export type Post = {
 export const posts: Post[] = [
   {
     slug: 'never-expiring-digital-business-card',
-    title: 'Never-Expiring Digital Business Card (with QR): A Simple Guide',
+    title: 'Digital Business Card with QR: Complete Guide to Never-Expiring Links',
     excerpt:
-      'Stop reprinting paper cards. Create a digital business card once, share via QR, and update anytime without breaking old codes.',
+      'Create a digital business card once and share via QR code. Update anytime without reprints or broken links—eco-friendly and never expires.',
     date: '2025-09-07',
-    content: `## What “never-expiring” really means
+    content: `## What a Never-Expiring Digital Business Card Means
 
-You create one link (and QR code) that always points to your latest business card data. Change your role or phone? Update the card content — the link and QR stay the same. No reprints, no broken links, no awkward “sorry this is outdated”.
+You create one link (and QR code) that always points to your latest business card data. Change your role or phone? Update the card content — the link and QR stay the same. No reprints, no broken links, no outdated information or broken contact details.
 
 ---
 
@@ -24,7 +24,7 @@ You create one link (and QR code) that always points to your latest business car
 - **Outdated info** — One edit updates everything you’ve shared before.
 - **Reprint costs** — No more paper batches when you change roles.
 - **Lost contacts** — People can scan and save your vCard in one tap.
-- **Cross‑channel sharing** — QR for in-person; short link for email/DM.
+- **Cross‑channel sharing** — QR codes for in-person, short links for email or direct messages.
 
 ---
 
@@ -47,7 +47,7 @@ You create one link (and QR code) that always points to your latest business car
 
 ---
 
-## Privacy & control
+## Privacy & Data Control
 
 - No camera access needed to share — others scan your QR.
 - You control updates — edit or hide fields anytime.
@@ -65,11 +65,11 @@ You create one link (and QR code) that always points to your latest business car
   },
   {
     slug: 'why-my-qr-business-card-never-expires',
-    title: 'Why My QR Business Card Never Expires',
+    title: 'Why QR Code Digital Business Cards Never Expire',
     excerpt:
-      'Discover how a QR code digital business card stays current forever—no reprints, no broken links. Cost‑effective, eco‑friendly, and effortless to share.',
+      'Learn why QR code digital business cards never expire. No reprints, no broken links—just cost-effective, eco-friendly, and effortless sharing.',
     date: '2025-09-06',
-    content: `> **Intro:** A never‑expiring **QR code digital business card** means one link and one QR that always open your latest details—no reprints, no broken links.
+    content: `> **Intro:** A permanent **QR code digital business card** means one link and one QR code that always show your latest details—no reprints, no broken links.
 
 ---
 
@@ -102,13 +102,13 @@ With paper, a new email or title makes old cards obsolete. A **QR business card*
 - The **QR code never changes**.
 - You update the content behind the link; scans always show the latest version.
 
-That’s why it *never expires*.
+That’s why a QR code digital business card never expires and always stays current.
 
 ---
 
 ## 4) Hidden Costs & Waste (and how QR flips it)
 
-Paper seems cheap, but the true cost adds up:
+Paper business cards seem cheap, but the true costs add up over time:
 
 - Design, printing, and shipping fees.
 - Entire batches tossed after small changes.
@@ -124,7 +124,7 @@ Paper seems cheap, but the true cost adds up:
 
 ## 5) Sharing Should Be Effortless
 
-Old tools forced the recipient to download apps or create accounts. Modern **QR code business cards** are different:
+Old tools forced the recipient to download apps or create accounts. Modern **QR code digital business cards** are different:
 
 - Create and share in the browser.
 - No app installs required.
@@ -155,7 +155,7 @@ Where a never‑expiring card shines:
 
 ## Key Takeaway
 
-A **QR code digital business card** stays **always up‑to‑date**, is **cost‑effective**, **eco‑friendly**, and **easy to share**. One link. One QR. **Never expiring.**`
+A **QR code digital business card** is **always up‑to‑date**, **cost‑effective**, **eco‑friendly**, and **effortless to share**. One link. One QR. **Never expiring.**`
   },
 ];
 

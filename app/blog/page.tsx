@@ -6,8 +6,8 @@ import { absoluteUrl } from '@/lib/seo';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Latest guides & updates.',
+  title: 'Digital Business Card Blog',
+  description: 'Guides, tips, and updates on digital business cards and QR codes.',
   alternates: { canonical: absoluteUrl('/blog') },
 };
 
@@ -26,8 +26,8 @@ export default async function BlogPage() {
   const posts = (await getPosts()) as Post[];
   return (
     <section>
-      <h1 className="text-3xl font-bold tracking-tight">Blog</h1>
-      <p className="mt-2 text-sm text-gray-500">Latest guides &amp; updates.</p>
+      <h1 className="text-3xl font-bold tracking-tight">Digital Business Card Blog</h1>
+      <p className="mt-2 text-sm text-gray-500">Guides, tips, and updates on digital business cards and QR codes.</p>
 
       <ul className="mt-8 space-y-10">
         {posts.map((p) => (
@@ -55,7 +55,7 @@ export default async function BlogPage() {
                 className="mt-2 inline-block text-sm underline"
                 aria-label={`Read more about ${p.title}`}
               >
-                Read more →
+                Continue reading →
               </Link>
             </article>
           </li>
