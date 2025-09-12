@@ -1,6 +1,10 @@
+// app/feed.xml/route.ts
 import { NextResponse } from 'next/server';
 import { getPosts } from '@/content/posts';
 import { absoluteUrl } from '@/lib/seo';
+
+export const dynamic = 'force-static';
+export const revalidate = 3600; // 1 小时
 
 export async function GET() {
   const items = getPosts()
