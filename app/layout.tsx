@@ -10,32 +10,32 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Free Digital Business Card & QR Code Business Card Generator | CardSpark',
+    default: 'Free Digital & QR Code Business Card Generator | CardSpark',
     template: '%s · CardSpark',
   },
   description:
-    'Design your free digital business card online in minutes. Generate QR code business cards, vCard files, and mobile‑friendly landing pages for networking and teams.',
+    'Create free digital business cards online. Share via QR code, export vCards, and update anytime — no app, no paper, eco-friendly and instant.',
   openGraph: {
     type: 'website',
     url: siteUrl,
     siteName: 'CardSpark',
-    title: 'Free Digital Business Card & QR Code Business Card Generator | CardSpark',
+    title: 'Free Digital & QR Code Business Card Generator | CardSpark',
     description:
-      'Design your free digital business card online in minutes. Generate QR code business cards, vCard files, and mobile‑friendly landing pages for networking and teams.',
+      'Create free digital business cards online. Share via QR code, export vCards, and update anytime — no app, no paper, eco-friendly and instant.',
     images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Digital Business Card & QR Code Business Card Generator | CardSpark',
+    title: 'Free Digital & QR Code Business Card Generator | CardSpark',
     description:
-      'Design your free digital business card online in minutes. Generate QR code business cards, vCard files, and mobile‑friendly landing pages for networking and teams.',
+      'Create free digital business cards online. Share via QR code, export vCards, and update anytime — no app, no paper, eco-friendly and instant.',
     images: ['/opengraph-image'],
   },
   alternates: {
     canonical: siteUrl,
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: ['/favicon.ico', { url: '/favicon.svg', type: 'image/svg+xml' }],
     apple: '/apple-touch-icon.png',
   },
 }
@@ -43,6 +43,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="robots" content="index, follow" />
+      </head>
       <body>{children}</body>
     </html>
   )

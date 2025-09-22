@@ -21,7 +21,12 @@ export default function SiteHeader({ subline }: Props) {
               className="flex items-center space-x-2 hover:opacity-90"
               aria-label="Go to homepage"
             >
-              <img src="/favicon.svg" alt="" className="h-8 w-8" />
+              <img
+                src="/favicon.svg"
+                width={28}
+                height={28}
+                alt="CardSpark — Digital Business Card logo"
+              />
               <span className="text-2xl font-bold text-gray-900">CardSpark</span>
             </Link>
             {subline ? <p className="mt-1 text-xs text-gray-500">{subline}</p> : null}

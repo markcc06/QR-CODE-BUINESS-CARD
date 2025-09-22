@@ -6,8 +6,9 @@ import { absoluteUrl } from '@/lib/seo';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'Digital Business Card & QR Code Business Card Blog',
-  description: 'Guides, templates, and vCard tools to create, share, and manage contact info online.',
+  title: 'Digital Business Card & QR Code Business Card',
+  description:
+    'Discover guides, templates, and vCard tools to create, share, and manage contact info online. Learn how digital and QR code business cards improve networking.',
   alternates: { canonical: absoluteUrl('/blog') },
 };
 
@@ -26,8 +27,8 @@ export default async function BlogPage() {
   const posts = (await getPosts()) as Post[];
   return (
     <section>
-      <h1 className="text-3xl font-bold tracking-tight">Digital Business Card & QR Code Business Card Blog</h1>
-      <p className="mt-2 text-sm text-gray-500">Guides, templates, and vCard tools to create, share, and manage contact info online.</p>
+      <h1 className="text-3xl font-bold tracking-tight">Digital Business Card & QR Code Business Card</h1>
+      <h2 className="mt-2 text-sm text-gray-500">Guides, templates, and vCard tools to create, share, and manage contact info online.</h2>
       <h2 className="mt-8 text-lg font-semibold">Latest posts</h2>
 
       <ul className="mt-8 space-y-10">
