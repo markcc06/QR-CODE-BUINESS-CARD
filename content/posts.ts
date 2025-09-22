@@ -157,6 +157,121 @@ Where a never‑expiring card shines:
 
 A **QR code digital business card** is **always up‑to‑date**, **cost‑effective**, **eco‑friendly**, and **effortless to share**. One link. One QR. **Never expiring.**`
   },
+  {
+    slug: 'qr-code-business-card-guide',
+    title: 'QR Code Business Card — The Complete Guide (Create, Share, Track)',
+    excerpt:
+      'Learn how to create a QR code business card, share it instantly, and track engagement — no app required.',
+    date: '2025-09-22',
+    content: `## Why Switch to a QR Code Business Card?
+
+Paper business cards get lost, go out of date, and frankly — they’re wasteful. A **QR code business card** solves all of that. It's modern, editable, and instantly shareable.
+
+No printing. No apps. No delays.
+
+Whether you're networking at events, freelancing, or building a personal brand, a QR business card helps you connect faster and smarter.
+
+---
+
+## What Is a QR Code Business Card?
+
+A **QR code business card** is a scannable code that links to your digital contact info. When someone scans it, they’re taken to your digital card or offered a vCard download.
+
+It can include:
+- Your name & job title  
+- Email & phone number  
+- Website & social profiles  
+- Company info or short bio  
+- (Optional) Photo or logo  
+
+You can generate one in seconds using a [free card generator](/digital-business-card-generator) and share it anywhere:
+- On your phone  
+- In your email signature  
+- On printed cards or resumes  
+- In your LinkedIn or Twitter bio  
+
+---
+
+## How to Create One (in 3 Steps)
+
+Creating your QR business card with **CardSpark** takes under 2 minutes:
+
+### 1. Go to the [QR Code Business Card Generator](/qr-code-business-card)
+
+No sign-up required. It’s completely free.
+
+### 2. Enter your contact info
+
+Name, title, company, phone, email, social links — all fields are optional.
+
+### 3. Download and share
+
+You’ll get:
+- A hosted digital business card page  
+- A QR code image to print or share  
+- A vCard file (.vcf) for easy import into contacts
+
+---
+
+## Can You Track QR Scans?
+
+We’re building built-in analytics at CardSpark — stay tuned for features like:
+- Scan count tracking  
+- Click-through stats  
+- Geographic insights  
+
+Until then, you can:
+- Use Bitly to shorten your card URL and monitor clicks  
+- Embed your card on your website and track with Google Analytics  
+
+---
+
+## Free vs Premium Features
+
+CardSpark is currently **100% free**, with:
+- Unlimited QR code generation  
+- Hosted card pages  
+- vCard file export  
+
+Coming soon:
+- Custom domains (e.g. yourname.cardspark.xyz)  
+- Analytics dashboards  
+- Multi-user teams and enterprise plans  
+
+---
+
+## Where to Use Your QR Business Card
+
+You can embed or display your QR code in:
+- Your resume or portfolio PDF  
+- Your email signature  
+- Your conference badge  
+- Instagram, Twitter, or LinkedIn bios  
+- WhatsApp or Telegram intro messages  
+- A printed business card (front or back)
+
+It's your **always-up-to-date contact hub**.
+
+---
+
+## Related Tools
+
+- 👉 [Digital Business Card Generator](/digital-business-card-generator)  
+- 👉 [Free vCard Generator (.vcf)](/free-vcard-generator)  
+- 👉 [Back to CardSpark Homepage](/)
+
+---
+
+## Final Thoughts
+
+A QR code business card is more than a gimmick — it's a better way to share who you are.
+
+It’s fast.  
+It’s editable.  
+It’s always available.
+
+Want one? [Create your free QR code business card](/qr-code-business-card) now.`
+  },
 ];
 
 export function getPosts(): Post[] {

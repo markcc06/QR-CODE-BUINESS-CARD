@@ -87,15 +87,16 @@ export default function HomePage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">
-            Free Digital Business Card Generator
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Free Digital Business Card & QR Code Business Card Generator
+          </h1>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            Create, Share & Update Instantly — No Paper, No App.
           </h2>
-          <p className="text-2xl font-semibold text-gray-800 mb-4">
-            Share Your Info Instantly, No Paper Needed.
-          </p>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Build a beautiful, shareable digital business card in under a minute. 
-            Generate QR codes, vCard files, and mobile-optimized landing pages.
+            Design your free digital business card online in minutes.<br />
+            Generate QR code business cards, vCard files,<br />
+            and mobile‑friendly landing pages for networking and teams.
           </p>
         </div>
 
@@ -145,24 +146,24 @@ export default function HomePage() {
             <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
               <Sparkles className="w-8 h-8 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">5 Professional Templates</h3>
-            <p className="text-gray-600">Choose from carefully designed templates that work perfectly on any device.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Customizable Templates for Every Profession</h3>
+            <p className="text-gray-600">Choose from modern digital business card templates that work seamlessly on any device.</p>
           </div>
           
           <div className="text-center">
             <div className="w-16 h-16 bg-teal-100 rounded-full mx-auto mb-4 flex items-center justify-center">
               <MessageCircle className="w-8 h-8 text-teal-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">One-Click Sharing</h3>
-            <p className="text-gray-600">Generate QR codes and shareable links that work immediately.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Instant QR Code Sharing</h3>
+            <p className="text-gray-600">Generate a QR code business card or shareable link that saves directly to contacts.</p>
           </div>
           
           <div className="text-center">
             <div className="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-4 flex items-center justify-center">
               <div className="w-8 h-8 bg-purple-600 rounded"></div>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Download vCard File</h3>
-            <p className="text-gray-600">Download standard vCard files that work with all contact apps.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Download Standard vCard (.vcf) Files</h3>
+            <p className="text-gray-600">Create and export vCards compatible with iPhone, Android, Outlook, and Google Contacts — GDPR‑friendly and ready for Europe.</p>
           </div>
         </div>
       </main>

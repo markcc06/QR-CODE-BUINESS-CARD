@@ -10,25 +10,25 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'CardSpark — QR Digital Business Card',
+    default: 'Free Digital Business Card & QR Code Business Card Generator | CardSpark',
     template: '%s · CardSpark',
   },
   description:
-    'Create a never-expiring digital business card with QR code and vCard. Update anytime and share instantly.',
+    'Design your free digital business card online in minutes. Generate QR code business cards, vCard files, and mobile‑friendly landing pages for networking and teams.',
   openGraph: {
     type: 'website',
     url: siteUrl,
     siteName: 'CardSpark',
-    title: 'CardSpark — QR Digital Business Card',
+    title: 'Free Digital Business Card & QR Code Business Card Generator | CardSpark',
     description:
-      'Create a never-expiring digital business card with QR code and vCard. Update anytime and share instantly.',
+      'Design your free digital business card online in minutes. Generate QR code business cards, vCard files, and mobile‑friendly landing pages for networking and teams.',
     images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CardSpark — QR Digital Business Card',
+    title: 'Free Digital Business Card & QR Code Business Card Generator | CardSpark',
     description:
-      'Create a never-expiring digital business card with QR code and vCard. Update anytime and share instantly.',
+      'Design your free digital business card online in minutes. Generate QR code business cards, vCard files, and mobile‑friendly landing pages for networking and teams.',
     images: ['/opengraph-image'],
   },
   alternates: {
