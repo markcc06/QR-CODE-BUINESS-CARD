@@ -3,10 +3,7 @@ import type { Metadata } from 'next'
 import React from 'react';
 import './globals.css'
 
-const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL || process.env.VERCEL_URL
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (vercelUrl ? `https://${vercelUrl}` : 'http://localhost:3000')
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.cardspark.xyz'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -49,6 +46,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+            ></script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);} 
+                  gtag('js', new Date());
+                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+                    page_path: window.location.pathname + window.location.search
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
       </head>
       <body>{children}</body>
     </html>
