@@ -6,8 +6,8 @@ import { absoluteUrl } from '@/lib/seo';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'Digital Business Card Blog',
-  description: 'Guides, tips, and updates on digital business cards and QR codes.',
+  title: 'Digital Business Card & QR Code Business Card Blog',
+  description: 'Guides, templates, and vCard tools to create, share, and manage contact info online.',
   alternates: { canonical: absoluteUrl('/blog') },
 };
 
@@ -26,14 +26,15 @@ export default async function BlogPage() {
   const posts = (await getPosts()) as Post[];
   return (
     <section>
-      <h1 className="text-3xl font-bold tracking-tight">Digital Business Card Blog</h1>
-      <p className="mt-2 text-sm text-gray-500">Guides, tips, and updates on digital business cards and QR codes.</p>
+      <h1 className="text-3xl font-bold tracking-tight">Digital Business Card & QR Code Business Card Blog</h1>
+      <p className="mt-2 text-sm text-gray-500">Guides, templates, and vCard tools to create, share, and manage contact info online.</p>
+      <h2 className="mt-8 text-lg font-semibold">Latest posts</h2>
 
       <ul className="mt-8 space-y-10">
         {posts.map((p) => (
           <li key={p.slug}>
             <article>
-              <h2 className="text-xl font-semibold">
+              <h3 className="text-xl font-semibold">
                 <Link
                   href={`/blog/${p.slug}`}
                   prefetch={false}
@@ -42,7 +43,7 @@ export default async function BlogPage() {
                 >
                   {p.title}
                 </Link>
-              </h2>
+              </h3>
               <p className="mt-1 text-xs text-gray-500">
                 <time dateTime={p.date}>{formatDate(p.date)}</time>
               </p>
