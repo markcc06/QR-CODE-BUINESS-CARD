@@ -20,6 +20,7 @@ export default function SiteHeader({ subline }: Props) {
               prefetch={false}
               className="flex items-center space-x-2 hover:opacity-90"
               aria-label="Go to homepage"
+              title="CardSpark Home — Free Digital Business Card Generator"
             >
               <img
                 src="/favicon.svg"
@@ -34,13 +35,13 @@ export default function SiteHeader({ subline }: Props) {
 
           {/* Right nav (match homepage 1:1) */}
           <nav className="flex items-center space-x-6">
-            <Link href="/blog" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline">
+            <Link href="/blog" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline" title="CardSpark Blog — Guides and Updates on Digital Business Cards">
               Blog
             </Link>
-            <Link href="/feedback" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline">
+            <Link href="/feedback" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline" title="Contact CardSpark — Feedback and Support">
               Contact
             </Link>
-            <Link href="/privacy" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline">
+            <Link href="/privacy" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline" title="CardSpark Privacy Policy">
               Privacy Policy
             </Link>
           </nav>

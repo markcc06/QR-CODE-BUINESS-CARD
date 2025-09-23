@@ -41,6 +41,7 @@ export default async function BlogPage() {
                   prefetch={false}
                   className="hover:underline"
                   aria-label={`Read ${p.title}`}
+                  title={`Read full article: ${p.title}`}
                 >
                   {p.title}
                 </Link>
@@ -56,6 +57,7 @@ export default async function BlogPage() {
                 prefetch={false}
                 className="mt-2 inline-block text-sm underline"
                 aria-label={`Read more about ${p.title}`}
+                title={`Continue reading: ${p.title}`}
               >
                 Continue reading →
               </Link>
