@@ -3,7 +3,7 @@
 import Script from "next/script";
 
 export default function GoogleAnalytics() {
-  const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+  const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-L0ZR0CGRLB";
 
   if (process.env.NODE_ENV !== "production") {
     return null; // 开发环境不加载
