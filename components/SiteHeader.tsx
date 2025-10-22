@@ -10,7 +10,7 @@ type Props = {
 
 export default function SiteHeader({ subline }: Props) {
   return (
-    <header className="border-b border-white/20 bg-white/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           {/* Brand (match homepage 1:1) */}
@@ -43,6 +43,12 @@ export default function SiteHeader({ subline }: Props) {
             </Link>
             <Link href="/privacy" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline" title="CardSpark Privacy Policy">
               Privacy Policy
+            </Link>
+            <Link href="/about" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline" title="About CardSpark">
+              About
+            </Link>
+            <Link href="/terms" prefetch={false} className="text-sm font-medium text-gray-700 hover:underline" title="CardSpark Terms of Service">
+              Terms
             </Link>
           </nav>
         </div>

@@ -54,10 +54,23 @@ export default function BlogPostPage({ params }: Props) {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
+      <header className="mb-8 text-center">
+        <h1 className="text-4xl font-bold tracking-tight mb-2 text-gray-900">CardSpark Blog</h1>
+        <p className="text-neutral-600 text-lg">
+          Your hub for digital business card insights — explore topics on vCard, QR codes, and
+          the evolution of contact sharing for modern professionals.
+        </p>
+        <div className="mt-3 text-sm text-blue-600">
+          Explore guides, tutorials, and case studies to get the most out of CardSpark.
+        </div>
+      </header>
       <article>
-        <h1 className="text-3xl font-semibold tracking-tight">{post.title}</h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          {new Date(post.date).toLocaleDateString()}
+        <h1 className="text-3xl font-semibold tracking-tight mb-2">{post.title}</h1>
+        <p className="text-sm text-neutral-500 mb-4">
+          {new Date(post.date).toLocaleDateString()} · {Math.ceil(post.content.split(' ').length / 200)} min read
+        </p>
+        <p className="text-base text-neutral-600 italic mb-6">
+          Explore insights about vCard, QR codes, and modern digital business cards powered by CardSpark.
         </p>
         <MarkdownRenderer content={post.content} />
       </article>

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import React from 'react';
 import './globals.css'
 import Script from 'next/script'
+import CookieConsent from '@/components/CookieConsent';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.cardspark.xyz'
 const gaId = process.env.NEXT_PUBLIC_GA_ID
@@ -69,7 +70,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body>{children}</body>
+      <body>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
+          {children}
+        </div>
+        <CookieConsent />
+      </body>
     </html>
   )
 }
